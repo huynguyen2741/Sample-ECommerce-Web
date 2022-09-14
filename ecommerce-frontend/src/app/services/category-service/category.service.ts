@@ -1,0 +1,43 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Category } from 'src/app/Models/categories';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CategoryService {
+  constructor(private http: HttpClient) {}
+
+  getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(
+      'http://augustproject.azurewebsites.net/category/'
+    );
+  }
+
+  getCategoryById(id: any): Observable<any> {
+    return this.http.get<any>(
+      `http://augustproject.azurewebsites.net/category/${id}`
+    );
+  }
+
+  deleteCategory(id: any): Observable<any> {
+    return this.http.delete(
+      `http://augustproject.azurewebsites.net/category/delete/${id}`
+    );
+  }
+
+  updateCategory(data: any): Observable<any> {
+    return this.http.put(
+      `http://augustproject.azurewebsites.net/category/update`,
+      data
+    );
+  }
+
+  addCategory(data: any): Observable<any> {
+    return this.http.post(
+      `http://augustproject.azurewebsites.net/category/admin/add`,
+      data
+    );
+  }
+}
