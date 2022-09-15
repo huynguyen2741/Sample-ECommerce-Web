@@ -11,33 +11,33 @@ export class UserService {
 
   getAllUsers(): Observable<[User]> {
     return this.http.get<[User]>(
-      'http://augustproject.azurewebsites.net/user/admin'
+      'https://augustproject.azurewebsites.net/user/admin'
     );
   }
 
   createUser(data: any): Observable<any> {
     return this.http.post(
-      'http://augustproject.azurewebsites.net/user/customer/register',
+      'https://augustproject.azurewebsites.net/user/customer/register',
       data
     );
   }
 
   deleteUser(userId: number): Observable<any> {
     return this.http.delete(
-      'http://augustproject.azurewebsites.net/user/customer/delete/' + userId
+      'https://augustproject.azurewebsites.net/user/customer/delete/' + userId
     );
   }
 
   updateUser(data: any): Observable<any> {
     return this.http.put(
-      'http://augustproject.azurewebsites.net/user/customer/update',
+      'https://augustproject.azurewebsites.net/user/customer/update',
       data
     );
   }
 
   getUserById(userId: number): Observable<User> {
     return this.http.get<User>(
-      'http://augustproject.azurewebsites.net/user/customer/' + userId
+      'https://augustproject.azurewebsites.net/user/customer/' + userId
     );
   }
 }

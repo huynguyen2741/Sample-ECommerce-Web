@@ -10,7 +10,7 @@ export class AddressService {
   constructor(private http: HttpClient) {}
   getAddressById(addressId: number): Observable<Address> {
     return this.http.get<Address>(
-      'http://augustproject.azurewebsites.net/address/' + addressId
+      'https://augustproject.azurewebsites.net/address/' + addressId
     );
   }
 }

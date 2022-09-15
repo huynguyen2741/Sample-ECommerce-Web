@@ -12,7 +12,7 @@ export class StripeService {
   makePayment(charge: Charges): Observable<any> {
     // `source` is obtained with Stripe.js; see https://stripe.com/docs/payments/accept-a-payment-charges#web-create-token
     return this.http.post(
-      'http://augustproject.azurewebsites.net/stripe/charge',
+      'https://augustproject.azurewebsites.net/stripe/charge',
       charge
     );
   }
