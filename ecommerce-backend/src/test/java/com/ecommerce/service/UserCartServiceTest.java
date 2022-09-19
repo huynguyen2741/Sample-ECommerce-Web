@@ -1,11 +1,18 @@
 package com.ecommerce.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.ecommerce.model.Address;
 import com.ecommerce.model.Orders;
@@ -22,6 +30,7 @@ import com.ecommerce.model.Role;
 import com.ecommerce.model.User;
 import com.ecommerce.model.UserCart;
 import com.ecommerce.model.UserCartId;
+import com.ecommerce.model.Vendors;
 import com.ecommerce.repo.UserCartRepo;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,13 +39,16 @@ class UserCartServiceTest {
 	@Mock	
 	private UserCartRepo repo;
 	
+	@MockBean
+	Vendors vendors;
+	
 	private UserCartService service;
 	private UserCart u;
 	
 	long userId = 1;
 	long productId = 1;
 
-	UserCartId userCartId = new UserCartId(userId,productId);
+	
 	
 	long id = 1;
 	private BigDecimal price= new BigDecimal(10000);
@@ -46,12 +58,13 @@ class UserCartServiceTest {
 	List<Orders> o = new ArrayList<>();
 	ProductCategory pc = new ProductCategory();
 	List<UserCart> userCart = new ArrayList<>();
-	Product product = new Product(id,"Lenovo Laptop","Legion 5 latop",price,weigth, quantity,"sample URL",rating,o,pc,userCart);
+	UserCartId userCartId = new UserCartId(userId,productId);
+	Product product = new Product(id,"Lenovo Laptop","Legion 5 latop",price,weigth, quantity,"sample URL",rating,o,pc,userCart, vendors);
 	
 	
 	Set<Role> r = new HashSet<>();
 	List<Address> a = new ArrayList<>();
-	User user = new User(id,"firstName","lastName","email","username","password","contact","ssn",o,r,a,userCart);
+	User user = new User(id,"3","firstName","lastName","email","username","password","contact","ssn",o,r,a,userCart);
 	
 	@BeforeEach
 	void setUp() throws Exception {
@@ -72,15 +85,47 @@ class UserCartServiceTest {
 		verify(repo).save(u);
 	}
 
-//	@Test
-//	void testUpdateUserCart() {
-//		when(repo.findById(u.getUserCartId())).thenReturn(Optional.of(u));
-//		assertThat(service.updateUserCart(u)).isEqualTo(u);
-//	}
-//
-//	@Test
-//	void testDeleteUserCart() {
-//		fail("Not yet implemented");
-//	}
+	@Test
+	void testUserCartEquals() {
+		UserCart u1 = new UserCart(userCartId,user,product,10);
+		UserCart u3 = new UserCart(userCartId,user,product,10);
+		boolean equals = u1.equals(u3);
+		assertEquals(true, equals);
+		assertNotEquals(false, equals);
+		assertNotSame(u1, u3);
+		u1 = u3;
+		assertSame(u1, u3);
+	}
+	
+	@Test
+	void testUserCartHashCode() {
+		assertNotEquals(u.toString(), u);
+		UserCart u2 = new UserCart(userCartId,user,product,15);
+		assertEquals(u.hashCode(), u.hashCode());
+		assertNotEquals(u.hashCode(), u2.hashCode());
+	}
+	
+	@Test
+	void testSetterMethods() {
+		UserCart u1 = new UserCart(userCartId,user,product,10);
+		UserCart u2 = new UserCart();
+		u2.setProduct(product);
+		u2.setQuantity(15);
+		u2.setUser(user);
+		u2.setUserCartId(userCartId);
+		assertNotEquals(u1, u2);
+	}
+	
+	@Test
+	void testGetUserCartById() {
+		when(repo.findById(u.getUserCartId())).thenReturn(Optional.of(u));
+		assertThat(service.getUserCartById(u.getUserCartId().getProductId(), u.getUserCartId().getUserId())).isEqualTo(u);
+	}
+	
+	@Test
+	void testDeleteUserCartById() {
+		service.deleteUserCart(userCartId);
+		verify(repo).deleteById(userCartId);
+	}
 
 }

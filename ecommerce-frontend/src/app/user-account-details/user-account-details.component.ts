@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../Models/user';
 import { UserService } from '../services/user-service/user.service';
-import { Address } from '../Models/address';
-import { AddressService } from '../services/address-service/address.service';
 
 @Component({
     selector: 'app-user-account-details',
@@ -11,8 +9,9 @@ import { AddressService } from '../services/address-service/address.service';
     styleUrls: ['./user-account-details.component.scss']
   })
 
-export class UserAccountDetailsComponent implements OnInit {
+export class UserAccountDetailsComponent {
   user: User = {
+    oktaId: "",
     userId: 0,
     firstName: '',
     lastName: '',
@@ -24,22 +23,8 @@ export class UserAccountDetailsComponent implements OnInit {
     roles: []
   };
 
-  /*address: Address = {
-    addressId: 0,
-    city: '',
-    state: '',
-    street: '',
-    zipcode: '',
-    country: '',
-    apartmentNumber: '',
-    userId: 0
-  } */
-  
-  ngOnInit(): void {}
-  constructor(private userService: UserService, private router: Router,
-    private addressService: AddressService) { 
+  constructor(private userService: UserService, private router: Router) { 
     this.userService.getUserById(23).subscribe(x => this.user = x);
-    //this.addressService.getAddressById(1).subscribe(x => this.address = x);
   }
 
   deleteUser(userId: number) : void {

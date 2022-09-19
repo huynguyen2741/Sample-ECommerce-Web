@@ -1,9 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '../Models/user';
 import { UserService } from '../services/user-service/user.service';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Address } from '../Models/address';
 import { AddressService } from '../services/address-service/address.service';
 
 @Component({
@@ -14,6 +12,7 @@ import { AddressService } from '../services/address-service/address.service';
 
 export class UserAdminEditComponent implements OnInit {
   user: User = {
+    oktaId: "",
      userId: 0,
      firstName: '',
      lastName: '',
@@ -47,7 +46,6 @@ export class UserAdminEditComponent implements OnInit {
   ngOnInit(): void {
     const userId = this.route.snapshot.params["userId"];
     this.userService.getUserById(userId).subscribe(x => this.user = x);
-   // this.addressService.getAddressById(1).subscribe(x => this.address = x);
   }
 
   updateUser() : void {

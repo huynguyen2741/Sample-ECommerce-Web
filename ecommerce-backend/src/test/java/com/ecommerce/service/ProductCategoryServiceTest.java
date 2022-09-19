@@ -2,6 +2,10 @@ package com.ecommerce.service;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -73,6 +77,25 @@ class ProductCategoryServiceTest {
 		long id = 1;
 		service.deleteCategory(id);
 		verify(repo).deleteById(id);
+	}
+	
+	@Test
+	void testCategoryEquals() {
+		ProductCategory p1 = new ProductCategory(1,"laptop",products);
+		ProductCategory p3 = new ProductCategory(1,"laptop",products);
+		boolean equals = p1.equals(p3);
+		assertEquals(true, equals);
+		assertNotEquals(false, equals);
+		assertNotSame(p1, p3);
+		p1 = p3;
+		assertSame(p1, p3);
+	}
+	
+	@Test
+	void testCategoryHashCode() {
+		ProductCategory p2 = new ProductCategory(1,"wrong category",products);
+		assertEquals(p.hashCode(), p.hashCode());
+		assertNotEquals(p.hashCode(), p2.hashCode());
 	}
 
 }

@@ -40,13 +40,13 @@ public class ProductController {
     }
 
     @PostMapping("/admin/add")
-    public void addProduct(@RequestBody Product product) {
-        productService.addProduct(product);
+    public Product addProduct(@RequestBody Product product) {
+        return productService.addProduct(product);
     }
 
     @PutMapping("/admin/update")
-    public void updateProduct(@RequestBody Product product) {
-        productService.updateProduct(product);
+    public Product updateProduct(@RequestBody Product product) {
+        return productService.updateProduct(product);
     }
 
     @DeleteMapping("admin/delete/{id}")

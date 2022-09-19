@@ -1,6 +1,10 @@
 package com.ecommerce.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -81,6 +85,25 @@ class RoleServiceTest {
 		when(repo.getRoleByName("USER")).thenReturn(r);
 		assertThat(service.getRoleByName("USER")).isEqualTo(r);
 		
+	}
+	
+	@Test
+	void testRoleEquals() {
+		Role r = new Role(id,"USER",u);
+		Role r3 = new Role(id,"USER",u);
+		boolean equals = r.equals(r3);
+		assertEquals(true, equals);
+		assertNotEquals(false, equals);
+		assertNotSame(r, r3);
+		r = r3;
+		assertSame(r, r3);
+	}
+	
+	@Test
+	void testRoleHashCode() {
+		Role r2 = new Role(id,"ADMIN",u);
+		assertEquals(r.hashCode(), r.hashCode());
+		assertNotEquals(r.hashCode(), r2.hashCode());
 	}
 
 }

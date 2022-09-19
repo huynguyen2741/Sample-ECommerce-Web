@@ -1,6 +1,10 @@
 package com.ecommerce.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,11 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.ecommerce.model.Orders;
 import com.ecommerce.model.Product;
 import com.ecommerce.model.ProductCategory;
 import com.ecommerce.model.UserCart;
+import com.ecommerce.model.Vendors;
 import com.ecommerce.repo.ProductRepo;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +35,9 @@ class ProductServiceTest {
 	private ProductRepo repo;
 	private ProductService service;
 	private Product p;
+	
+	@MockBean
+	Vendors vendors;
 	
 	long id = 1;
 	private BigDecimal price= new BigDecimal(10000);
@@ -43,7 +52,7 @@ class ProductServiceTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		service = new ProductService(repo);
-		p = new Product(id,"Lenovo Laptop","Legion 5 latop",price,weigth, quantity,"sample URL",rating,o,pc,u);
+		p = new Product(id,"Lenovo Laptop","Legion 5 latop",price,weigth, quantity,"sample URL",rating,o,pc,u, vendors);
 	}
 
 	@Test
@@ -53,21 +62,25 @@ class ProductServiceTest {
 	}
 
 	@Test
-	
-	void testGetProductById() {
+	void testGetProductById() throws Exception {
 		when(repo.findById(p.getProductId())).thenReturn(Optional.of(p));
 		assertThat(service.getProductById(p.getProductId())).isEqualTo(p);
 	}
-
-	@Test
 	
+	@Test
+	void testGetProductByName() {
+		List<Product> products = new ArrayList<>();
+		products.add(p);
+		when(repo.getProductsByName(p.getName())).thenReturn(products);
+		assertThat(service.getProductByName(p.getName())).isEqualTo(products);
+	}
+	@Test
 	void testAddProduct() {
 		when(repo.save(p)).thenReturn(p);
 		assertThat(service.addProduct(p)).isEqualTo(p);
 	}
 
 	@Test
-	
 	void testUpdateProduct() {
 		String description = "new_description";
 		p.setDescription(description);
@@ -78,11 +91,32 @@ class ProductServiceTest {
 	}
 
 	@Test
-
 	void testDeleteProductById() {
 		long id = 1;
-		service.deleteProductById(id);
+		repo.deleteById(id);
 		verify(repo).deleteById(id);
+		assertThat(service.getAllProducts().isEmpty());
+	}
+	
+	@Test
+	void testProductEquals() {
+		Product p1 = new Product(id,"Lenovo Laptop","Legion 5 latop",price,weigth, quantity,"sample URL",rating,o,pc,u, vendors);
+		Product p2 = new Product(id,"wrong product name","Legion 5 latop",price,weigth, quantity,"sample URL",rating,o,pc,u, vendors);
+		Product p3 = new Product(id,"Lenovo Laptop","Legion 5 latop",price,weigth, quantity,"sample URL",rating,o,pc,u, vendors);
+		assertEquals(true, p2.equals(p2));
+		assertEquals(false, p1.equals(p2));
+		assertEquals(false, p2.equals(null));
+		assertEquals(true, p1.equals(p3));
+		assertNotSame(p1, p3);
+		p1 = p3;
+		assertSame(p1, p3);
+	}
+	
+	@Test
+	void testProductHashCode() {
+		Product p2 = new Product(id,"wrong product name","Legion 5 latop",price,weigth, quantity,"sample URL",rating,o,pc,u, vendors);
+		assertEquals(p.hashCode(), p.hashCode());
+		assertNotEquals(p.hashCode(), p2.hashCode());
 	}
 
 
