@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'ecommerce-backend/**'
   workflow_dispatch:
 
 jobs:
@@ -24,15 +22,13 @@ jobs:
           java-version: '11'
 
       - name: Build with Maven
-        run: |
-          cd ecommerce-backend
-          mvn clean install
+        run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: java-app
-          path: '${{ github.workspace }}/ecommerce-backend/target/*.jar'
+          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,5 +49,5 @@ jobs:
         with:
           app-name: 'Ecommerce-Backend'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5EB5246E98BB4871A20657E6BE790737 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_45B3516E1F974FCFB8C27212AF60C593 }}
           package: '*.jar'
